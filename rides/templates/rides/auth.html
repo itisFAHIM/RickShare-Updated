@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>RickShare - Access</title>
+    <style>
+        body { font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; background: #f0f2f5; margin: 0; }
+        .card { background: white; padding: 2rem; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); width: 350px; }
+        h2 { color: #00b894; text-align: center; }
+        input, select { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
+        button { width: 100%; padding: 10px; background: #00b894; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        .toggle { text-align: center; margin-top: 15px; font-size: 0.9rem; cursor: pointer; color: #666; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h2>RickShare</h2>
+        <div id="auth-form">
+            <h3 id="form-title">Login</h3>
+            <input type="text" id="id_field" placeholder="Username or Phone Number">
+            <input type="password" id="pass_field" placeholder="Password">
+            
+            <div id="signup-extra" style="display: none;">
+                <input type="email" id="email_field" placeholder="Email Address">
+                <input type="text" id="phone_field" placeholder="Phone Number">
+                <select id="user_type">
+                    <option value="RIDER">I am a Rider</option>
+                    <option value="DRIVER">I am a Driver</option>
+                </select>
+            </div>
+            
+            <button onclick="handleAuth()">Submit</button>
+            <p class="toggle" onclick="toggleForm()" id="toggle-text">Don't have an account? Sign up</p>
+        </div>
+    </div>
+
+    <script>
+        let isLogin = true;
+        function toggleForm() {
+            isLogin = !isLogin;
+            document.getElementById('form-title').innerText = isLogin ? 'Login' : 'Signup';
+            document.getElementById('signup-extra').style.display = isLogin ? 'none' : 'block';
+            document.getElementById('toggle-text').innerText = isLogin ? "Don't have an account? Sign up" : "Already have an account? Login";
+        }
+
+        async function handleAuth() {
+            const endpoint = isLogin ? '/api/auth/login' : '/api/auth/signup';
+            // Here you would use fetch() to talk to your Ninja API
+            alert("This will now connect to your " + endpoint + " endpoint!");
+        }
+    </script>
+</body>
+</html>

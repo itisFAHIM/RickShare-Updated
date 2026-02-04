@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RickShare | Sign Up</title>
+    <style>
+        :root { --uber-black: #000000; --uber-white: #ffffff; --accent: #00b894; }
+        body { margin: 0; font-family: 'Inter', sans-serif; background: #f9f9f9; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        .signup-card { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.05); width: 100%; max-width: 480px; }
+        .logo { font-size: 24px; font-weight: 900; color: var(--uber-black); text-align: center; margin-bottom: 20px; }
+        h2 { font-size: 28px; text-align: center; margin-bottom: 30px; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
+        input, select { width: 100%; padding: 14px; background: #f3f3f3; border: 2px solid transparent; border-radius: 8px; font-size: 15px; box-sizing: border-box; transition: 0.3s; }
+        input:focus, select:focus { border-color: var(--uber-black); background: white; outline: none; }
+        .full-width { grid-column: span 2; }
+        button { width: 100%; padding: 16px; background: var(--accent); color: white; border: none; border-radius: 8px; font-size: 18px; font-weight: 600; cursor: pointer; margin-top: 20px; }
+        button:hover { background: #00a383; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,184,148,0.3); }
+        .toggle-link { text-align: center; margin-top: 25px; color: #666; font-size: 14px; }
+        .toggle-link a { color: var(--uber-black); font-weight: 700; text-decoration: none; }
+    </style>
+</head>
+<body>
+    <div class="signup-card">
+        <div class="logo">RickShare</div>
+        <h2>Create account</h2>
+        <form method="POST" action="/api/auth/signup">
+            <div class="grid">
+                <input type="text" name="username" placeholder="Full Name" required>
+                <input type="text" name="phone_number" placeholder="Mobile Number" required>
+                <input type="email" name="email" placeholder="Email Address" class="full-width" required>
+                <input type="password" name="password" placeholder="Create Password" class="full-width" required>
+                <select name="user_type" class="full-width">
+                    <option value="RIDER">Passenger (Request Rides)</option>
+                    <option value="DRIVER">Driver (Earn with RickShare)</option>
+                </select>
+            </div>
+            <button type="submit">Get Started</button>
+        </form>
+        <div class="toggle-link">
+            Already have an account? <a href="/login">Log in</a>
+        </div>
+    </div>
+</body>
+</html>

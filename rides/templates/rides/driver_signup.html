@@ -1,0 +1,177 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RickShare | Drive & Earn</title>
+    <style>
+        :root { --uber-black: #000000; --accent: #00b894; }
+        body { margin: 0; font-family: 'Inter', sans-serif; background: #f6f6f6; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+        .signup-card { background: white; width: 100%; max-width: 550px; padding: 50px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); }
+        .logo { font-size: 22px; font-weight: 900; color: var(--uber-black); margin-bottom: 10px; }
+        h2 { font-size: 28px; margin-bottom: 30px; letter-spacing: -0.5px; }
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .full-width { grid-column: span 2; }
+        input, select { width: 100%; padding: 14px; background: #f9f9f9; border: 1px solid #ddd; border-radius: 8px; font-size: 15px; box-sizing: border-box; }
+        input:focus { border-color: var(--accent); outline: none; background: #fff; }
+        label { font-size: 12px; color: #666; font-weight: bold; margin-bottom: 5px; display: block; }
+        button { width: 100%; padding: 18px; background: var(--accent); color: white; border: none; border-radius: 8px; font-size: 18px; font-weight: 600; cursor: pointer; margin-top: 30px; transition: 0.3s; }
+        button:hover { background: #00a383; box-shadow: 0 5px 15px rgba(0,184,148,0.2); }
+    </style>
+</head>
+<body>
+    <div class="signup-card">
+        <div class="logo">RickShare Partner</div>
+        <h2>Earn money on your schedule</h2>
+        <form method="POST" action="/api/auth/signup">
+            <div class="form-grid">
+                <div>
+                    <label>FULL NAME</label>
+                    <input type="text" name="username" placeholder="As per NID" required>
+                </div>
+                <div>
+                    <label>MOBILE NUMBER</label>
+                    <input type="text" name="phone_number" placeholder="01XXX-XXXXXX" required>
+                </div>
+                <div class="full-width">
+                    <label>EMAIL ADDRESS</label>
+                    <input type="email" name="email" placeholder="name@example.com" required>
+                </div>
+                <div>
+                    <label>NID NUMBER</label>
+                    <input type="text" name="nid_number" placeholder="10 or 17 digits" required>
+                </div>
+                <div>
+                    <label>DRIVING LICENSE</label>
+                    <input type="text" name="license_number" placeholder="License No." required>
+                </div>
+                <div class="full-width">
+                    <label>VEHICLE TYPE</label>
+                    <select name="vehicle_type">
+                        <option value="BIKE">Motorbike</option>
+                        <option value="CAR">Car</option>
+                        <option value="CNG">CNG / Auto</option>
+                        <option value="MICRO">Micro Car</option>
+                    </select>
+                </div>
+                <div class="full-width">
+                    <label>PASSWORD</label>
+                    <input type="password" name="password" placeholder="Min 8 characters" required>
+                </div>
+            </div>
+            
+            <input type="hidden" name="user_type" value="DRIVER">
+            <button type="submit">Submit Application</button>
+        </form>
+    </div>
+</body>
+</html> -->
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RickShare | Become a Partner</title>
+    <style>
+        :root { --uber-black: #000000; --uber-white: #ffffff; --accent: #00b894; }
+        body { margin: 0; font-family: 'Inter', sans-serif; background: var(--uber-white); display: flex; height: 100vh; overflow: hidden; }
+        
+        /* Using your local driver.jpg image for the side panel */
+        .side-image { 
+            flex: 1.2; 
+            background: url("{% static 'rides/driver.jpg' %}") center/cover no-repeat; 
+            filter: brightness(0.85);
+            border-right: 1px solid #eee;
+        }
+        
+        .auth-container { flex: 1.1; display: flex; justify-content: center; align-items: center; padding: 40px; background: white; overflow-y: auto; }
+        .auth-card { width: 100%; max-width: 480px; padding: 20px 0; }
+        .logo { font-size: 26px; font-weight: 900; margin-bottom: 20px; color: var(--uber-black); letter-spacing: -1px; }
+        h2 { font-size: 32px; margin-bottom: 8px; color: var(--uber-black); font-weight: 700; }
+        p { color: #666; margin-bottom: 30px; line-height: 1.5; font-size: 15px; }
+        
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .full-width { grid-column: span 2; }
+        
+        label { display: block; font-size: 12px; font-weight: 700; color: #888; margin-bottom: 8px; text-transform: uppercase; }
+        input, select { width: 100%; padding: 14px; background: #f6f6f6; border: 2px solid transparent; border-radius: 8px; font-size: 15px; box-sizing: border-box; transition: 0.3s; }
+        input:focus, select:focus { border-color: var(--accent); background: white; outline: none; }
+        
+        button { width: 100%; padding: 18px; background: var(--accent); color: white; border: none; border-radius: 8px; font-size: 18px; font-weight: 600; cursor: pointer; transition: 0.3s; margin-top: 25px; }
+        button:hover { background: #00a383; transform: translateY(-1px); box-shadow: 0 5px 15px rgba(0,184,148,0.2); }
+        
+        .footer-link { text-align: center; margin-top: 30px; color: #666; font-size: 14px; padding-bottom: 20px; }
+        .footer-link a { color: var(--uber-black); font-weight: 700; text-decoration: none; }
+    </style>
+</head>
+<body>
+    <div class="side-image"></div>
+
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="logo">RickShare Partner</div>
+            <h2>Drive and Earn</h2>
+            <p>Sign up now to start earning with the most trusted ride-sharing platform in Bangladesh.</p>
+            
+            <form method="POST" action="/api/auth/signup">
+                {% csrf_token %} <div class="form-grid">
+                    <div class="full-width">
+                        <label>Full Name</label>
+                        <input type="text" name="username" placeholder="Enter your full name" required>
+                    </div>
+                    
+                    <div>
+                        <label>Phone Number</label>
+                        <input type="text" name="phone_number" placeholder="01XXX-XXXXXX" required>
+                    </div>
+                    
+                    <div>
+                        <label>Email Address</label>
+                        <input type="email" name="email" placeholder="name@example.com" required>
+                    </div>
+
+                    <div>
+                        <label>NID Number</label>
+                        <input type="text" name="nid_number" placeholder="10 or 17 digits" required>
+                    </div>
+                    
+                    <div>
+                        <label>Vehicle Type</label>
+                        <select name="vehicle_type">
+                            <option value="BIKE">Motorbike</option>
+                            <option value="CNG">CNG / Auto</option>
+                            <option value="CAR">Private Car</option>
+                            <option value="MICRO">Micro Car</option>
+                        </select>
+                    </div>
+
+                    <div class="full-width">
+                        <label>Create Password</label>
+                        <input type="password" name="password" placeholder="At least 8 characters" required>
+                    </div>
+
+                    <div>
+            <label>Your Profile Photo</label>
+            <input type="file" name="profile_image" accept="image/*" required>
+        </div>
+
+        <div>
+            <label>License Photo (Front)</label>
+            <input type="file" name="license_image" accept="image/*" required>
+        </div>
+                </div>
+                
+                <input type="hidden" name="user_type" value="DRIVER">
+                
+                <button type="submit">Submit Application</button>
+            </form>
+            
+            <div class="footer-link">
+                Already have a partner account? <a href="/login">Log in here</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

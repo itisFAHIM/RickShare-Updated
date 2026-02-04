@@ -1,0 +1,111 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RickShare | Passenger Signup</title>
+    <style>
+        :root { --uber-black: #000000; --uber-white: #ffffff; --accent: #00b894; }
+        body { margin: 0; font-family: 'Inter', sans-serif; background: #fff; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        .signup-card { width: 100%; max-width: 400px; padding: 40px; }
+        .logo { font-size: 24px; font-weight: 900; color: var(--uber-black); margin-bottom: 30px; }
+        h2 { font-size: 32px; margin-bottom: 10px; font-weight: 700; }
+        p { color: #666; margin-bottom: 30px; font-size: 15px; }
+        input { width: 100%; padding: 16px; background: #f3f3f3; border: 2px solid transparent; border-radius: 8px; font-size: 16px; box-sizing: border-box; margin-bottom: 15px; transition: 0.3s; }
+        input:focus { border-color: var(--uber-black); background: white; outline: none; }
+        button { width: 100%; padding: 16px; background: var(--uber-black); color: white; border: none; border-radius: 8px; font-size: 18px; font-weight: 600; cursor: pointer; margin-top: 10px; transition: 0.2s; }
+        button:hover { background: #333; }
+        .footer-text { text-align: center; margin-top: 25px; color: #888; font-size: 13px; }
+        .footer-text a { color: var(--accent); text-decoration: none; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="signup-card">
+        <div class="logo">RickShare</div>
+        <h2>Sign up to ride</h2>
+        <p>Your safe ride across Dhaka is just a step away.</p>
+        <form method="POST" action="/api/auth/signup">
+            <input type="text" name="username" placeholder="Full Name" required>
+            <input type="email" name="email" placeholder="Email Address" required>
+            <input type="text" name="phone_number" placeholder="Mobile Number (+880)" required>
+            <input type="password" name="password" placeholder="Create Password" required>
+            <input type="hidden" name="user_type" value="RIDER">
+            
+            <button type="submit">Create Account</button>
+        </form>
+        <div class="footer-text">
+            Already have an account? <a href="/login">Log in</a>
+        </div>
+    </div>
+</body>
+</html> -->
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RickShare | Passenger Signup</title>
+    <style>
+        :root { --uber-black: #000000; --uber-white: #ffffff; --accent: #00b894; }
+        body { margin: 0; font-family: 'Inter', sans-serif; background: var(--uber-white); display: flex; height: 100vh; overflow: hidden; }
+        
+        /* Consistent with your login page design */
+        .side-image { 
+            flex: 1.2; 
+            background: url("{% static 'rides/login.png' %}") center/cover no-repeat; 
+            filter: brightness(0.8);
+        }
+        
+        .auth-container { flex: 1; display: flex; justify-content: center; align-items: center; padding: 40px; background: white; }
+        .auth-card { width: 100%; max-width: 400px; }
+        .logo { font-size: 28px; font-weight: 900; margin-bottom: 40px; color: var(--uber-black); letter-spacing: -1px; }
+        h2 { font-size: 32px; margin-bottom: 8px; color: var(--uber-black); font-weight: 700; }
+        p { color: #666; margin-bottom: 30px; line-height: 1.5; }
+        .input-group { margin-bottom: 15px; }
+        input { width: 100%; padding: 16px; background: #f6f6f6; border: 2px solid transparent; border-radius: 8px; font-size: 15px; box-sizing: border-box; transition: 0.3s; }
+        input:focus { border-color: var(--accent); background: white; outline: none; }
+        
+        button { width: 100%; padding: 18px; background: var(--uber-black); color: white; border: none; border-radius: 8px; font-size: 18px; font-weight: 600; cursor: pointer; transition: 0.2s; margin-top: 15px; }
+        button:hover { background: #333; transform: translateY(-1px); }
+        
+        .footer-link { text-align: center; margin-top: 30px; color: #666; font-size: 14px; }
+        .footer-link a { color: var(--accent); font-weight: 700; text-decoration: none; }
+    </style>
+</head>
+<body>
+    <div class="side-image"></div>
+
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="logo">RickShare</div>
+            <h2>Join the journey</h2>
+            <p>Create your passenger account and start riding across Dhaka in minutes.</p>
+            
+            <form method="POST" action="/api/auth/signup">
+                {% csrf_token %} <div class="input-group">
+                    <input type="text" name="username" placeholder="Full Name" required>
+                </div>
+                <div class="input-group">
+                    <input type="email" name="email" placeholder="Email Address" required>
+                </div>
+                <div class="input-group">
+                    <input type="text" name="phone_number" placeholder="Mobile Number (+880)" required>
+                </div>
+                <div class="input-group">
+                    <input type="password" name="password" placeholder="Set Password" required>
+                </div>
+                
+                <input type="hidden" name="user_type" value="RIDER">
+                
+                <button type="submit">Create Account</button>
+            </form>
+            
+            <div class="footer-link">
+                Already have an account? <a href="/login">Log in here</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

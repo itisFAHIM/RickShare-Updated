@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RickShare | Login</title>
+    <style>
+        :root { --uber-black: #000000; --uber-white: #ffffff; --uber-gray: #afafaf; --accent: #00b894; }
+        body { margin: 0; font-family: 'Inter', sans-serif; background: var(--uber-white); display: flex; height: 100vh; }
+        .side-image { flex: 1; background: url('https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?q=80&w=2070') center/cover; }
+        .auth-container { flex: 1; display: flex; justify-content: center; align-items: center; padding: 40px; }
+        .auth-card { width: 100%; max-width: 400px; }
+        .logo { font-size: 28px; font-weight: 900; margin-bottom: 40px; color: var(--uber-black); letter-spacing: -1px; }
+        h2 { font-size: 32px; margin-bottom: 8px; color: var(--uber-black); }
+        p { color: #666; margin-bottom: 30px; }
+        .input-group { margin-bottom: 20px; }
+        input { width: 100%; padding: 16px; background: #f3f3f3; border: 2px solid transparent; border-radius: 8px; font-size: 16px; box-sizing: border-box; transition: 0.3s; }
+        input:focus { border-color: var(--uber-black); background: white; outline: none; }
+        button { width: 100%; padding: 16px; background: var(--uber-black); color: white; border: none; border-radius: 8px; font-size: 18px; font-weight: 600; cursor: pointer; transition: 0.2s; }
+        button:hover { background: #333; }
+        .toggle-link { text-align: center; margin-top: 20px; color: #666; font-size: 14px; }
+        .toggle-link a { color: var(--accent); font-weight: 600; text-decoration: none; border-bottom: 2px solid transparent; }
+        .toggle-link a:hover { border-bottom-color: var(--accent); }
+    </style>
+</head>
+<body>
+    <div class="side-image"></div>
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="logo">RickShare</div>
+            <h2>Welcome back</h2>
+            <p>Enter your details to request a ride.</p>
+            <form method="POST" action="/api/auth/login">
+                <div class="input-group">
+                    <input type="text" name="identifier" placeholder="Phone or Username" required>
+                </div>
+                <div class="input-group">
+                    <input type="password" name="password" placeholder="Password" required>
+                </div>
+                <button type="submit">Log In</button>
+            </form>
+            <div class="toggle-link">
+                Don't have an account? <a href="/signup">Sign up now</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
+
+<!-- {% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RickShare | Login</title>
+    <style>
+        :root { --uber-black: #000000; --uber-white: #ffffff; --uber-gray: #afafaf; --accent: #00b894; }
+        body { margin: 0; font-family: 'Inter', sans-serif; background: var(--uber-white); display: flex; height: 100vh; overflow: hidden; }
+        
+        /* Pointing to your specific local image: login.png */
+        .side-image { 
+            flex: 1.2; 
+            background: url("{% static 'rides/login.png' %}") center/cover no-repeat; 
+            filter: brightness(0.9);
+        }
+        
+        .auth-container { flex: 1; display: flex; justify-content: center; align-items: center; padding: 40px; background: white; }
+        .auth-card { width: 100%; max-width: 400px; }
+        .logo { font-size: 28px; font-weight: 900; margin-bottom: 40px; color: var(--uber-black); letter-spacing: -1px; }
+        h2 { font-size: 32px; margin-bottom: 8px; color: var(--uber-black); font-weight: 700; }
+        p { color: #666; margin-bottom: 30px; line-height: 1.5; }
+        .input-group { margin-bottom: 20px; }
+        input { width: 100%; padding: 18px; background: #f6f6f6; border: 2px solid transparent; border-radius: 8px; font-size: 16px; box-sizing: border-box; transition: 0.3s; }
+        input:focus { border-color: var(--uber-black); background: white; outline: none; }
+        button { width: 100%; padding: 18px; background: var(--uber-black); color: white; border: none; border-radius: 8px; font-size: 18px; font-weight: 600; cursor: pointer; transition: 0.2s; margin-top: 10px; }
+        button:hover { background: #333; }
+        .toggle-link { text-align: center; margin-top: 30px; color: #666; font-size: 14px; }
+        .toggle-link a { color: var(--accent); font-weight: 700; text-decoration: none; }
+    </style>
+</head>
+<body>
+    <div class="side-image"></div>
+
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="logo">RickShare</div>
+            <h2>Welcome back</h2>
+            <p>Enter your phone or username to access your dashboard and request a ride.</p>
+            
+            <form method="POST" action="/api/auth/login">
+                {% csrf_token %} 
+                <div class="input-group">
+                    <input type="text" name="identifier" placeholder="Phone or Username" required>
+                </div>
+                <div class="input-group">
+                    <input type="password" name="password" placeholder="Password" required>
+                </div>
+                <button type="submit">Log In</button>
+            </form>
+            
+            <div class="toggle-link">
+                Don't have an account? <a href="/signup">Sign up now</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html> -->

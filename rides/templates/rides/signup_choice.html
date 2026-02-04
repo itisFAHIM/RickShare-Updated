@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Join RickShare</title>
+    <style>
+        body { margin: 0; font-family: 'Inter', sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; background: #000; color: white; }
+        .container { display: flex; gap: 30px; text-align: center; }
+        .choice-card { 
+            background: #1a1a1a; padding: 50px; border-radius: 15px; width: 300px; 
+            cursor: pointer; transition: 0.3s; border: 1px solid #333; text-decoration: none; color: white;
+        }
+        .choice-card:hover { transform: scale(1.05); border-color: #00b894; background: #111; }
+        .icon { font-size: 50px; margin-bottom: 20px; }
+        h2 { margin: 10px 0; }
+        p { color: #888; font-size: 14px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/signup/passenger/" class="choice-card">
+            <div class="icon">🚲</div>
+            <h2>Ride with RickShare</h2>
+            <p>Go anywhere in Dhaka safely and quickly.</p>
+        </a>
+        <a href="/signup/driver/" class="choice-card">
+            <div class="icon">💸</div>
+            <h2>Drive & Earn</h2>
+            <p>Turn your bike, car, or CNG into an income source.</p>
+        </a>
+    </div>
+</body>
+</html>
