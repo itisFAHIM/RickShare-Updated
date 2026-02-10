@@ -38,21 +38,27 @@ class Profile(models.Model):
 
 # 2. RideRequest stores the actual trip data
 class RideRequest(models.Model):
-    rider = models.ForeignKey(User, on_delete=models.CASCADE, related_name='rides')
+    STATUS_CHOICES = (
+        ('PENDING', 'Pending'),
+        ('ACCEPTED', 'Accepted'),
+        ('COMPLETED', 'Completed'),
+        ('CANCELLED', 'Cancelled'),
+    )
+
+    rider = models.ForeignKey(User, on_delete=models.CASCADE, related_name='ride_requests')
+    driver = models.ForeignKey(User, on_delete=models.CASCADE, related_name='rides_assigned', null=True, blank=True)
     pickup_address = models.CharField(max_length=255)
     dropoff_address = models.CharField(max_length=255)
     
-    # New Coordinate Fields
+    # New fields for map coordinates
     pickup_lat = models.FloatField(null=True, blank=True)
     pickup_lng = models.FloatField(null=True, blank=True)
     dropoff_lat = models.FloatField(null=True, blank=True)
     dropoff_lng = models.FloatField(null=True, blank=True)
     
-    vehicle_type = models.CharField(max_length=20) 
-    status = models.CharField(max_length=20, default="PENDING")
-    
-    # Financial and Logistical Data
-    estimated_fare = models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
-    distance_km = models.FloatField(default=0.0)
+    vehicle_type = models.CharField(max_length=20)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='PENDING')
     created_at = models.DateTimeField(auto_now_add=True)
-    
+
+    def __str__(self):
+        return f"Ride {self.id} - {self.status}"

@@ -6,6 +6,9 @@ from django.shortcuts import redirect, render
 from .models import Profile, RideRequest
 from typing import Optional
 from django.contrib.auth import logout
+from ninja import Router, Schema
+from django.contrib.auth.models import User
+from .models import Profile, RideRequest
 
 router = Router()
 
@@ -122,7 +125,7 @@ def create_ride(request, data: RideSchema):
         vehicle_type=data.vehicle_type,
         status="PENDING"
     )
-    return {"id": ride.id, "status": "Looking for drivers..."}
+    return {"id": ride.id, "status": "Request Sent"}
 
 
 

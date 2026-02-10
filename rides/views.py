@@ -27,3 +27,4 @@ def passenger_dashboard_view(request):
 def request_ride_view(request):
     """Renders the map page for specifying pickup and destination."""
     return render(request, 'rides/request_ride.html')
+

@@ -1,141 +1,202 @@
+{% load static %}
 <!DOCTYPE html>
 <html>
 <head>
-    <title>RickShare - Request Ride</title>
+    <title>RickShare | Vibrant Journey</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
     <style>
-        #map { height: 400px; width: 100%; border-radius: 10px; margin-bottom: 15px; }
-        .search-container { margin-bottom: 20px; position: relative; }
-        input { width: 90%; padding: 10px; margin: 5px 0; border: 1px solid #ccc; border-radius: 5px; }
-        .suggestions { 
-            position: absolute; background: white; border: 1px solid #ccc; 
-            width: 90%; z-index: 1000; max-height: 150px; overflow-y: auto; 
+        body { margin: 0; font-family: 'Inter', sans-serif; background-color: #fff; overflow: hidden; }
+        
+        .app-wrapper { display: flex; flex-direction: column; height: 100vh; }
+        nav { 
+            display: flex; justify-content: space-between; align-items: center; 
+            padding: 15px 40px; background: black; color: white; z-index: 1001;
         }
-        .suggestion-item { padding: 10px; cursor: pointer; border-bottom: 1px solid #eee; }
-        .suggestion-item:hover { background-color: #f0f0f0; }
-        .btn { background-color: #007bff; color: white; padding: 12px; border: none; border-radius: 5px; cursor: pointer; width: 100%; }
+        .logo { font-size: 22px; font-weight: 900; color: white; text-decoration: none; }
+        
+        .main-content { display: flex; flex: 1; overflow: hidden; }
+
+        .sidebar {
+            width: 400px; background: white; padding: 30px;
+            box-shadow: 4px 0 15px rgba(0,0,0,0.05);
+            display: flex; flex-direction: column; z-index: 1000;
+        }
+
+        #map { flex: 1; height: 100%; }
+
+        h2 { margin: 0 0 25px 0; font-weight: 800; font-size: 24px; }
+
+        .input-box { margin-bottom: 20px; position: relative; }
+        .input-box label { display: block; font-size: 11px; font-weight: 700; color: #999; margin-bottom: 8px; text-transform: uppercase; }
+        .input-box input {
+            width: 100%; padding: 14px; border: 1px solid #eee; border-radius: 8px;
+            background: #f8f8f8; font-size: 14px; box-sizing: border-box;
+        }
+
+        /* Colorful Vehicle Selector Cards */
+        .vehicle-options { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 20px; }
+        .vehicle-card {
+            border: 2px solid #eee; border-radius: 12px; padding: 15px 5px;
+            text-align: center; cursor: pointer; transition: 0.3s ease;
+        }
+        .vehicle-card i { font-size: 24px; margin-bottom: 10px; display: block; }
+        .vehicle-card span { font-size: 12px; font-weight: 600; }
+        
+        /* Specific colors for "Colorful" feel */
+        .vehicle-card.bike.active { border-color: #ff9f43; background: #fff4ea; color: #ff9f43; }
+        .vehicle-card.cng.active { border-color: #10ac84; background: #e6f7f2; color: #10ac84; }
+        .vehicle-card.car.active { border-color: #54a0ff; background: #edf4ff; color: #54a0ff; }
+        
+        .vehicle-card:hover { border-color: #ccc; transform: translateY(-2px); }
+
+        .suggestions {
+            position: absolute; background: white; width: 100%;
+            z-index: 1002; border-radius: 0 0 8px 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            max-height: 200px; overflow-y: auto; border: 1px solid #eee;
+        }
+        .suggestion-item { padding: 12px; cursor: pointer; font-size: 13px; border-bottom: 1px solid #f9f9f9; }
+        .suggestion-item:hover { background: #f5f5f5; }
+
+        .btn-confirm {
+            background: black; color: white; width: 100%; padding: 18px;
+            border: none; border-radius: 10px; font-weight: 800; font-size: 16px;
+            cursor: pointer; margin-top: auto; transition: 0.2s;
+        }
+        .btn-confirm:hover { background: #333; }
     </style>
 </head>
 <body>
 
-<div style="padding: 20px; font-family: sans-serif;">
-    <h3>Request a Ride</h3>
-    
-    <div id="map"></div>
+<div class="app-wrapper">
+    <nav>
+        <a href="/" class="logo">RickShare</a>
+        <div style="font-size: 13px; font-weight: 500;">{{ request.user.username }}</div>
+    </nav>
 
-    <div class="search-container">
-        <label>Pickup Location</label>
-        <input type="text" id="pickup_input" placeholder="Finding your location..." autocomplete="off">
-        <div id="pickup_suggestions" class="suggestions"></div>
-        
-        <label>Destination</label>
-        <input type="text" id="dropoff_input" placeholder="Where to?" autocomplete="off">
-        <div id="dropoff_suggestions" class="suggestions"></div>
+    <div class="main-content">
+        <div class="sidebar">
+            <h2>Go Anywhere</h2>
+            
+            <div class="input-box">
+                <label>Pickup Point</label>
+                <input type="text" id="pickup_input" placeholder="Loading your location..." autocomplete="off">
+                <div id="pickup_suggestions" class="suggestions"></div>
+            </div>
 
-        <select id="vehicle_type" style="width: 100%; padding: 10px; margin: 10px 0;">
-            <option value="Bike">Bike</option>
-            <option value="CNG">CNG</option>
-            <option value="Car">Car</option>
-        </select>
+            <div class="input-box">
+                <label>Dropoff Point</label>
+                <input type="text" id="dropoff_input" placeholder="Enter destination" autocomplete="off">
+                <div id="dropoff_suggestions" class="suggestions"></div>
+            </div>
 
-        <button class="btn" onclick="submitRide()">Request RickShare</button>
+            <label style="font-size: 11px; font-weight: 700; color: #999;">SELECT RIDE</label>
+            <div class="vehicle-options">
+                <div class="vehicle-card bike active" onclick="setVehicle('Bike', this)">
+                    <i class="fa-solid fa-motorcycle"></i>
+                    <span>Bike</span>
+                </div>
+                <div class="vehicle-card cng" onclick="setVehicle('CNG', this)">
+                    <i class="fa-solid fa-truck-pickup"></i>
+                    <span>CNG</span>
+                </div>
+                <div class="vehicle-card car" onclick="setVehicle('Car', this)">
+                    <i class="fa-solid fa-car"></i>
+                    <span>Car</span>
+                </div>
+            </div>
+
+            <button class="btn-confirm" onclick="submitRide()">Confirm Request</button>
+        </div>
+
+        <div id="map"></div>
     </div>
 </div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
 <script>
-    // 1. Initialize Map centered on Dhaka
-    const map = L.map('map').setView([23.8103, 90.4125], 13);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+    let selectedVehicle = 'Bike';
+    
+    // Colorful Map Setup: Standard OSM tiles for full color/vibrancy
+    const map = L.map('map', { zoomControl: false }).setView([23.8103, 90.4125], 13);
+    L.control.zoom({ position: 'bottomright' }).addTo(map);
 
-    // Markers
-    let pickupMarker = L.marker([23.8103, 90.4125], {draggable: true, title: "Pickup"}).addTo(map);
-    let dropoffMarker = L.marker([23.8150, 90.4200], {draggable: true, title: "Destination"}).addTo(map);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
 
-    // 2. Automatic Location Detection
+    let pickupMarker = L.marker([23.8103, 90.4125], { draggable: true }).addTo(map);
+    let dropoffMarker = L.marker([23.8200, 90.4200], { draggable: true }).addTo(map);
+
+    function setVehicle(type, el) {
+        selectedVehicle = type;
+        document.querySelectorAll('.vehicle-card').forEach(c => c.classList.remove('active'));
+        el.classList.add('active');
+    }
+
+    // Auto-location detection
     if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(position => {
-            const { latitude, longitude } = position.coords;
-            const latlng = [latitude, longitude];
+        navigator.geolocation.getCurrentPosition(p => {
+            const latlng = [p.coords.latitude, p.coords.longitude];
             map.setView(latlng, 15);
             pickupMarker.setLatLng(latlng);
-            reverseGeocode(latitude, longitude, 'pickup');
+            reverseGeocode(latlng[0], latlng[1], 'pickup');
         });
     }
 
-    // 3. Autocomplete / Suggestions Logic
-    function setupAutocomplete(inputId, suggestionId, type) {
-        const input = document.getElementById(inputId);
-        const suggestionsDiv = document.getElementById(suggestionId);
-
-        input.addEventListener('input', async () => {
-            const query = input.value;
-            if (query.length < 3) { suggestionsDiv.innerHTML = ''; return; }
-
-            const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${query}&limit=5`);
-            const data = await response.json();
-
-            suggestionsDiv.innerHTML = data.map(item => `
-                <div class="suggestion-item" onclick="selectLocation('${item.display_name}', ${item.lat}, ${item.lon}, '${inputId}', '${suggestionId}', '${type}')">
-                    ${item.display_name}
-                </div>
-            `).join('');
-        });
-    }
-
-    function selectLocation(name, lat, lon, inputId, suggestionId, type) {
-        document.getElementById(inputId).value = name;
-        document.getElementById(suggestionId).innerHTML = '';
-        const latlng = [lat, lon];
+    async function searchLocation(query, type) {
+        if (query.length < 3) return;
+        const url = `https://nominatim.openstreetmap.org/search?format=json&q=${query}&countrycodes=bd&viewbox=90.32,23.65,90.52,23.89&bounded=1&limit=5`;
+        const resp = await fetch(url);
+        const data = await resp.json();
         
-        if (type === 'pickup') {
-            pickupMarker.setLatLng(latlng);
-        } else {
-            dropoffMarker.setLatLng(latlng);
-        }
-        map.panTo(latlng);
+        const div = document.getElementById(`${type}_suggestions`);
+        div.innerHTML = data.map(i => `
+            <div class="suggestion-item" onclick="selectLoc('${i.display_name}', ${i.lat}, ${i.lon}, '${type}')">
+                ${i.display_name.split(',').slice(0,3).join(',')}
+            </div>
+        `).join('');
+    }
+
+    function selectLoc(name, lat, lon, type) {
+        document.getElementById(`${type}_input`).value = name;
+        document.getElementById(`${type}_suggestions`).innerHTML = '';
+        const marker = type === 'pickup' ? pickupMarker : dropoffMarker;
+        marker.setLatLng([lat, lon]);
+        map.panTo([lat, lon]);
     }
 
     async function reverseGeocode(lat, lon, type) {
-        const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`);
-        const data = await response.json();
-        const inputId = type === 'pickup' ? 'pickup_input' : 'dropoff_input';
-        document.getElementById(inputId).value = data.display_name;
+        const resp = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`);
+        const data = await resp.json();
+        const address = data.display_name.split(',').slice(0,3).join(',');
+        document.getElementById(`${type}_input`).value = address;
     }
 
-    // Update address when markers are dragged
-    pickupMarker.on('dragend', e => reverseGeocode(e.target.getLatLng().lat, e.target.getLatLng().lng, 'pickup'));
-    dropoffMarker.on('dragend', e => reverseGeocode(e.target.getLatLng().lat, e.target.getLatLng().lng, 'dropoff'));
+    document.getElementById('pickup_input').oninput = e => searchLocation(e.target.value, 'pickup');
+    document.getElementById('dropoff_input').oninput = e => searchLocation(e.target.value, 'dropoff');
 
-    setupAutocomplete('pickup_input', 'pickup_suggestions', 'pickup');
-    setupAutocomplete('dropoff_input', 'dropoff_suggestions', 'dropoff');
-
-    // 4. Submit to API
     async function submitRide() {
         const payload = {
             pickup_address: document.getElementById('pickup_input').value,
             dropoff_address: document.getElementById('dropoff_input').value,
-            vehicle_type: document.getElementById('vehicle_type').value,
+            vehicle_type: selectedVehicle,
             pickup_lat: pickupMarker.getLatLng().lat,
             pickup_lng: pickupMarker.getLatLng().lng,
             dropoff_lat: dropoffMarker.getLatLng().lat,
             dropoff_lng: dropoffMarker.getLatLng().lng
         };
 
-        const response = await fetch('/api/rides/request', {
+        const response = await fetch('/api/auth/request', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'X-CSRFToken': '{{ csrf_token }}' },
             body: JSON.stringify(payload)
         });
 
-        const result = await response.json();
-        if (result.id) {
-            alert("Ride Requested! Status: " + result.status);
-        } else {
-            alert("Error: " + (result.error || "Unknown error"));
-        }
+        const res = await response.json();
+        if(res.id) alert("Finding your ride...");
+        else alert("Error: " + res.error);
     }
 </script>
 </body>
