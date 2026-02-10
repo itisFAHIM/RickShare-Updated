@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>RickShare - Request Ride</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        #map { height: 400px; width: 100%; border-radius: 10px; margin-bottom: 15px; }
+        .search-container { margin-bottom: 20px; position: relative; }
+        input { width: 90%; padding: 10px; margin: 5px 0; border: 1px solid #ccc; border-radius: 5px; }
+        .suggestions { 
+            position: absolute; background: white; border: 1px solid #ccc; 
+            width: 90%; z-index: 1000; max-height: 150px; overflow-y: auto; 
+        }
+        .suggestion-item { padding: 10px; cursor: pointer; border-bottom: 1px solid #eee; }
+        .suggestion-item:hover { background-color: #f0f0f0; }
+        .btn { background-color: #007bff; color: white; padding: 12px; border: none; border-radius: 5px; cursor: pointer; width: 100%; }
+    </style>
+</head>
+<body>
+
+<div style="padding: 20px; font-family: sans-serif;">
+    <h3>Request a Ride</h3>
+    
+    <div id="map"></div>
+
+    <div class="search-container">
+        <label>Pickup Location</label>
+        <input type="text" id="pickup_input" placeholder="Finding your location..." autocomplete="off">
+        <div id="pickup_suggestions" class="suggestions"></div>
+        
+        <label>Destination</label>
+        <input type="text" id="dropoff_input" placeholder="Where to?" autocomplete="off">
+        <div id="dropoff_suggestions" class="suggestions"></div>
+
+        <select id="vehicle_type" style="width: 100%; padding: 10px; margin: 10px 0;">
+            <option value="Bike">Bike</option>
+            <option value="CNG">CNG</option>
+            <option value="Car">Car</option>
+        </select>
+
+        <button class="btn" onclick="submitRide()">Request RickShare</button>
+    </div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script>
+    // 1. Initialize Map centered on Dhaka
+    const map = L.map('map').setView([23.8103, 90.4125], 13);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+
+    // Markers
+    let pickupMarker = L.marker([23.8103, 90.4125], {draggable: true, title: "Pickup"}).addTo(map);
+    let dropoffMarker = L.marker([23.8150, 90.4200], {draggable: true, title: "Destination"}).addTo(map);
+
+    // 2. Automatic Location Detection
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(position => {
+            const { latitude, longitude } = position.coords;
+            const latlng = [latitude, longitude];
+            map.setView(latlng, 15);
+            pickupMarker.setLatLng(latlng);
+            reverseGeocode(latitude, longitude, 'pickup');
+        });
+    }
+
+    // 3. Autocomplete / Suggestions Logic
+    function setupAutocomplete(inputId, suggestionId, type) {
+        const input = document.getElementById(inputId);
+        const suggestionsDiv = document.getElementById(suggestionId);
+
+        input.addEventListener('input', async () => {
+            const query = input.value;
+            if (query.length < 3) { suggestionsDiv.innerHTML = ''; return; }
+
+            const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${query}&limit=5`);
+            const data = await response.json();
+
+            suggestionsDiv.innerHTML = data.map(item => `
+                <div class="suggestion-item" onclick="selectLocation('${item.display_name}', ${item.lat}, ${item.lon}, '${inputId}', '${suggestionId}', '${type}')">
+                    ${item.display_name}
+                </div>
+            `).join('');
+        });
+    }
+
+    function selectLocation(name, lat, lon, inputId, suggestionId, type) {
+        document.getElementById(inputId).value = name;
+        document.getElementById(suggestionId).innerHTML = '';
+        const latlng = [lat, lon];
+        
+        if (type === 'pickup') {
+            pickupMarker.setLatLng(latlng);
+        } else {
+            dropoffMarker.setLatLng(latlng);
+        }
+        map.panTo(latlng);
+    }
+
+    async function reverseGeocode(lat, lon, type) {
+        const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`);
+        const data = await response.json();
+        const inputId = type === 'pickup' ? 'pickup_input' : 'dropoff_input';
+        document.getElementById(inputId).value = data.display_name;
+    }
+
+    // Update address when markers are dragged
+    pickupMarker.on('dragend', e => reverseGeocode(e.target.getLatLng().lat, e.target.getLatLng().lng, 'pickup'));
+    dropoffMarker.on('dragend', e => reverseGeocode(e.target.getLatLng().lat, e.target.getLatLng().lng, 'dropoff'));
+
+    setupAutocomplete('pickup_input', 'pickup_suggestions', 'pickup');
+    setupAutocomplete('dropoff_input', 'dropoff_suggestions', 'dropoff');
+
+    // 4. Submit to API
+    async function submitRide() {
+        const payload = {
+            pickup_address: document.getElementById('pickup_input').value,
+            dropoff_address: document.getElementById('dropoff_input').value,
+            vehicle_type: document.getElementById('vehicle_type').value,
+            pickup_lat: pickupMarker.getLatLng().lat,
+            pickup_lng: pickupMarker.getLatLng().lng,
+            dropoff_lat: dropoffMarker.getLatLng().lat,
+            dropoff_lng: dropoffMarker.getLatLng().lng
+        };
+
+        const response = await fetch('/api/rides/request', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-CSRFToken': '{{ csrf_token }}' },
+            body: JSON.stringify(payload)
+        });
+
+        const result = await response.json();
+        if (result.id) {
+            alert("Ride Requested! Status: " + result.status);
+        } else {
+            alert("Error: " + (result.error || "Unknown error"));
+        }
+    }
+</script>
+</body>
+</html>

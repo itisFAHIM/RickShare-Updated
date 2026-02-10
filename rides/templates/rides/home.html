@@ -74,19 +74,31 @@
 </head>
 <body>
     <nav>
-        <div class="logo">RickShare</div>
-        <div class="nav-links">
+    <div class="logo">RickShare</div>
+    <div class="nav-links">
+        {% if user.is_authenticated %}
+            <span style="margin-right: 15px;">Welcome, **{{ user.username }}**</span>
+            
+            {% if user.profile.user_type == "DRIVER" %}
+                <a href="/driver/dashboard/">Driver Panel</a>
+            {% else %}
+                <a href="/passenger/dashboard/">Book a Ride</a>
+            {% endif %}
+            
+            <a href="/api/auth/logout" style="color: #ff4757;">Logout</a>
+        {% else %}
             <a href="/login">Log in</a>
             <a href="/signup" style="background: #00b894; padding: 10px 20px; border-radius: 25px;">Sign up</a>
-        </div>
-    </nav>
+        {% endif %}
+    </div>
+</nav>
 
     <div class="hero">
         <div class="hero-content">
             <h1>Go anywhere <br>with RickShare</h1>
             <p>Request a ride, hop on a bike, or earn money driving—all in one app designed for the heart of Dhaka.</p>
             <div class="cta-box">
-                <a href="/signup/passenger/" class="btn-black">Request a Ride</a>
+                <a href="{% url 'passenger_dashboard' %}" class="btn-black">Request a Ride</a>
                 <a href="/signup/driver/" class="btn-outline">Drive & Earn</a>
             </div>
         </div>

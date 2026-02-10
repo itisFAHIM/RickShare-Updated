@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 from django.shortcuts import redirect, render
 from .models import Profile, RideRequest
 from typing import Optional
+from django.contrib.auth import logout
 
 router = Router()
 
@@ -94,23 +95,34 @@ def login_user(request,
     return {"error": "Invalid phone/username or password"}
 
 
-# --- RIDE ENDPOINTS ---
+
+class RideSchema(Schema):
+    pickup_address: str
+    dropoff_address: str
+    vehicle_type: str
+    # Coordinates sent from the frontend map
+    pickup_lat: float
+    pickup_lng: float
+    dropoff_lat: float
+    dropoff_lng: float
 
 @router.post("/request")
 def create_ride(request, data: RideSchema):
-    """
-    Endpoint for a Rider to request a ride.
-    """
-    user = request.user if request.user.is_authenticated else User.objects.first()
-    
+    if not request.user.is_authenticated:
+        return {"error": "Authentication required"}
+
     ride = RideRequest.objects.create(
-        rider=user,
+        rider=request.user,
         pickup_address=data.pickup_address,
         dropoff_address=data.dropoff_address,
-        vehicle_type=data.vehicle_type
+        pickup_lat=data.pickup_lat,
+        pickup_lng=data.pickup_lng,
+        dropoff_lat=data.dropoff_lat,
+        dropoff_lng=data.dropoff_lng,
+        vehicle_type=data.vehicle_type,
+        status="PENDING"
     )
-    return {"id": ride.id, "status": "Looking for drivers nearby..."}
-
+    return {"id": ride.id, "status": "Looking for drivers..."}
 
 
 

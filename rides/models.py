@@ -30,6 +30,8 @@ class Profile(models.Model):
     vehicle_type = models.CharField(max_length=10, null=True, blank=True)
     license_image = models.ImageField(upload_to='licenses/', null=True, blank=True)
     is_verified = models.BooleanField(default=False)
+    current_lat = models.FloatField(null=True, blank=True)
+    current_lng = models.FloatField(null=True, blank=True)
 
     def __str__(self):
         return f"{self.user.username} ({self.user_type})"
@@ -39,11 +41,18 @@ class RideRequest(models.Model):
     rider = models.ForeignKey(User, on_delete=models.CASCADE, related_name='rides')
     pickup_address = models.CharField(max_length=255)
     dropoff_address = models.CharField(max_length=255)
-    vehicle_type = models.CharField(max_length=20) # Bike, Car, CNG, etc.
-    status = models.CharField(max_length=20, default="PENDING")
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return f"Ride {self.id} - {self.vehicle_type}"
     
+    # New Coordinate Fields
+    pickup_lat = models.FloatField(null=True, blank=True)
+    pickup_lng = models.FloatField(null=True, blank=True)
+    dropoff_lat = models.FloatField(null=True, blank=True)
+    dropoff_lng = models.FloatField(null=True, blank=True)
+    
+    vehicle_type = models.CharField(max_length=20) 
+    status = models.CharField(max_length=20, default="PENDING")
+    
+    # Financial and Logistical Data
+    estimated_fare = models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
+    distance_km = models.FloatField(default=0.0)
+    created_at = models.DateTimeField(auto_now_add=True)
     
